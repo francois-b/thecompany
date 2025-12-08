@@ -1,0 +1,13 @@
+{
+  "project_name": "",
+  "stack_prefix": "",
+  "pipeline_name": "",
+  "todos_path": "docs/todos",
+  "design_docs_path": "docs/design",
+  "meeting_notes_path": "docs/meeting-notes",
+  "mobile": {
+    "android_apk_path": "android/app/build/outputs/apk/debug",
+    "ios_app_path": "ios/build/Build/Products/Debug-iphonesimulator"
+  },
+  "frontends": []
+}
