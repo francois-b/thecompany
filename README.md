@@ -4,37 +4,36 @@ Reusable Claude Code tooling for project standups and infrastructure monitoring.
 
 ## Installation
 
-```bash
-# From any project directory
-~/dev/thecompany/install.sh .
+Run once to install globally:
 
-# Or specify a target
-~/dev/thecompany/install.sh ~/dev/myproject
+```bash
+~/dev/thecompany/install.sh
 ```
 
-This copies:
-- `.claude/commands/standup.md` - The standup slash command
-- `scripts/standup-data.sh` - Data collection script
-- `.standup-config.json` - Configuration template
+This creates symlinks in `~/.claude/` pointing to this repo:
+- `~/.claude/commands/standup.md` → Slash command
+- `~/.claude/scripts/standup-data.sh` → Data collection script
+
+Changes to files in this repo apply immediately to all projects.
 
 ## Usage
 
 ```bash
-# In Claude Code
+# In Claude Code (any project)
 /standup
 ```
 
-On first run, you'll be prompted to configure:
+On first run in a project, you'll be prompted to configure:
 - **Project name** - Display name for headers
 - **Stack prefix** - CloudFormation stack filter (e.g., "STC")
 - **Pipeline name** - CodePipeline name
 - **Frontend directories** - Paths to frontend apps
 
-Configuration is saved to `.standup-config.json`.
+Configuration is saved to `.standup-config.json` in each project.
 
 ## Configuration
 
-Edit `.standup-config.json` to customize:
+Each project's `.standup-config.json`:
 
 ```json
 {
@@ -57,20 +56,20 @@ Edit `.standup-config.json` to customize:
 To run `/standup` without permission prompts, add to your Claude Code settings:
 
 ```
-Bash(./scripts/standup-data.sh:*)
+Bash(~/.claude/scripts/standup-data.sh:*)
 ```
 
 ## Structure
 
 ```
 thecompany/
-├── install.sh              # Installation script
+├── install.sh              # Global installation script
 ├── commands/
-│   └── standup.md          # Slash command template
+│   └── standup.md          # Slash command (symlinked to ~/.claude/commands/)
 ├── scripts/
-│   └── standup-data.sh     # Data collection script
+│   └── standup-data.sh     # Data collection (symlinked to ~/.claude/scripts/)
 └── templates/
-    └── standup-config.json # Config template
+    └── standup-config.json # Config template (for reference)
 ```
 
 ## Related

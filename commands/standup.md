@@ -43,7 +43,7 @@ Then write the config to `.standup-config.json`:
 Run the standup data collection script:
 
 ```bash
-./scripts/standup-data.sh
+~/.claude/scripts/standup-data.sh
 ```
 
 This outputs sections delimited by `=== SECTION_NAME ===` markers.
