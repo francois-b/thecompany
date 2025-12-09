@@ -13,11 +13,11 @@ mkdir -p ~/.claude/commands
 mkdir -p ~/.claude/scripts
 
 # Symlink commands
-ln -sf "$THECOMPANY_DIR/commands/standup.md" ~/.claude/commands/standup.md
+ln -sf "$THECOMPANY_DIR/.claude/commands/standup.md" ~/.claude/commands/standup.md
 echo "  ✓ Linked ~/.claude/commands/standup.md"
 
 # Symlink scripts
-ln -sf "$THECOMPANY_DIR/scripts/standup-data.sh" ~/.claude/scripts/standup-data.sh
+ln -sf "$THECOMPANY_DIR/.claude/scripts/standup-data.sh" ~/.claude/scripts/standup-data.sh
 echo "  ✓ Linked ~/.claude/scripts/standup-data.sh"
 
 echo ""
