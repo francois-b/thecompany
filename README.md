@@ -8,9 +8,35 @@ Works with both Claude Code desktop/CLI and Claude Code on the web.
 
 ### For Claude Code on the Web
 
-**No installation needed!** When you clone this repository on the web, the `/standup` command is automatically available because the files are in `.claude/commands/` within the repo.
+To use these commands in **other projects** on the web (e.g., `project-a`, `project-b`):
 
-Simply use `/standup` in any Claude Code web session.
+1. **Add a SessionStart hook** to your project's `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if [ ! -d ~/.thecompany ]; then git clone https://github.com/francois-b/thecompany ~/.thecompany; fi && bash ~/.thecompany/web-install.sh'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+2. **What this does:**
+   - Clones `thecompany` and `theteam` repos to the web VM (once per session)
+   - Creates `~/.claude/` directory structure
+   - Symlinks all commands and scripts from both repos
+   - Now `/standup` and other commands work in your project!
+
+A template is available in `templates/claude-settings-web.json`.
 
 ### For Claude Code Desktop/CLI (Local)
 
@@ -73,16 +99,18 @@ Bash(~/.claude/scripts/standup-data.sh:*)
 
 ```
 thecompany/
-├── install.sh              # Local installation script (desktop/CLI only)
-├── .claude/                # Web-compatible location
+├── install.sh                      # Local installation script (desktop/CLI)
+├── web-install.sh                  # Web installation script (called by SessionStart)
+├── .claude/                        # Command and script storage
 │   ├── commands/
-│   │   └── standup.md      # Slash command
+│   │   └── standup.md              # Slash command
 │   └── scripts/
-│       └── standup-data.sh # Data collection script
-├── commands/               # Legacy (kept for reference)
-├── scripts/                # Legacy (kept for reference)
-└── templates/
-    └── standup-config.json # Config template
+│       └── standup-data.sh         # Data collection script
+├── templates/
+│   ├── standup-config.json         # Per-project config template
+│   └── claude-settings-web.json    # SessionStart hook template for web
+├── commands/                       # Legacy (deprecated)
+└── scripts/                        # Legacy (deprecated)
 ```
 
 ## Related
