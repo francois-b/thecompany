@@ -2,9 +2,19 @@
 
 Reusable Claude Code tooling for project standups and infrastructure monitoring.
 
+Works with both Claude Code desktop/CLI and Claude Code on the web.
+
 ## Installation
 
-Run once to install globally:
+### For Claude Code on the Web
+
+**No installation needed!** When you clone this repository on the web, the `/standup` command is automatically available because the files are in `.claude/commands/` within the repo.
+
+Simply use `/standup` in any Claude Code web session.
+
+### For Claude Code Desktop/CLI (Local)
+
+Run once to install globally across all your local projects:
 
 ```bash
 ~/dev/thecompany/install.sh
@@ -63,13 +73,16 @@ Bash(~/.claude/scripts/standup-data.sh:*)
 
 ```
 thecompany/
-├── install.sh              # Global installation script
-├── commands/
-│   └── standup.md          # Slash command (symlinked to ~/.claude/commands/)
-├── scripts/
-│   └── standup-data.sh     # Data collection (symlinked to ~/.claude/scripts/)
+├── install.sh              # Local installation script (desktop/CLI only)
+├── .claude/                # Web-compatible location
+│   ├── commands/
+│   │   └── standup.md      # Slash command
+│   └── scripts/
+│       └── standup-data.sh # Data collection script
+├── commands/               # Legacy (kept for reference)
+├── scripts/                # Legacy (kept for reference)
 └── templates/
-    └── standup-config.json # Config template (for reference)
+    └── standup-config.json # Config template
 ```
 
 ## Related
