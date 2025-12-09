@@ -1,5 +1,5 @@
 #!/bin/bash
-# Setup global Claude Code commands (run once)
+# Setup global Claude Code commands and scripts (run once)
 # Usage: ~/dev/thecompany/install.sh
 
 set -e
@@ -12,14 +12,30 @@ echo "Installing thecompany tooling globally..."
 mkdir -p ~/.claude/commands
 mkdir -p ~/.claude/scripts
 
-# Symlink commands
-ln -sf "$THECOMPANY_DIR/.claude/commands/standup.md" ~/.claude/commands/standup.md
-echo "  ✓ Linked ~/.claude/commands/standup.md"
+# Symlink commands (from .claude/commands/)
+for cmd in "$THECOMPANY_DIR"/.claude/commands/*.md; do
+  name=$(basename "$cmd")
+  ln -sf "$cmd" ~/.claude/commands/"$name"
+  echo "  ✓ Linked ~/.claude/commands/$name"
+done
 
-# Symlink scripts
-ln -sf "$THECOMPANY_DIR/.claude/scripts/standup-data.sh" ~/.claude/scripts/standup-data.sh
-echo "  ✓ Linked ~/.claude/scripts/standup-data.sh"
+# Symlink scripts (from .claude/scripts/)
+for script in "$THECOMPANY_DIR"/.claude/scripts/*.sh; do
+  name=$(basename "$script")
+  ln -sf "$script" ~/.claude/scripts/"$name"
+  chmod +x "$script"
+  echo "  ✓ Linked ~/.claude/scripts/$name"
+done
 
 echo ""
-echo "Done! /standup is now available in all projects."
+echo "Done! Global commands installed:"
+echo "  /standup        - Project standup with AWS status"
+echo "  /new-design-doc - Create a new design document"
+echo "  /new-bug        - Create a new bug report"
+echo "  /new-todo       - Create a new TODO item"
+echo "  /new-research   - Create a new research document"
+echo ""
 echo "Edit files in $THECOMPANY_DIR to update globally."
+echo ""
+echo "To set up docs structure in a project, run:"
+echo "  $THECOMPANY_DIR/init-docs.sh <project-path>"

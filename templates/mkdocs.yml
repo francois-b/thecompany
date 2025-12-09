@@ -1,0 +1,38 @@
+# MkDocs configuration
+# Update site_name and site_description for your project
+
+site_name: Project Docs
+site_description: Internal documentation
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.highlight
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+
+plugins:
+  - search
+  - tags
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - admonition
+  - toc:
+      permalink: true
+
+nav:
+  - Home: README.md
+  - Design Docs: design/
+  - Operations: operations/
+  - Meta: meta/

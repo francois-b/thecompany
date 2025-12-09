@@ -1,6 +1,6 @@
 # thecompany
 
-Reusable Claude Code tooling for project standups and infrastructure monitoring.
+Reusable Claude Code tooling for project documentation and standups, distributed via global symlinks.
 
 Works with both Claude Code desktop/CLI and Claude Code on the web.
 
@@ -46,26 +46,23 @@ Run once to install globally across all your local projects:
 ~/dev/thecompany/install.sh
 ```
 
-This creates symlinks in `~/.claude/` pointing to this repo:
-- `~/.claude/commands/standup.md` → Slash command
-- `~/.claude/scripts/standup-data.sh` → Data collection script
+This creates symlinks in `~/.claude/` for all commands and scripts.
 
-Changes to files in this repo apply immediately to all projects.
-
-## Usage
+### Initialize Docs in a Project
 
 ```bash
-# In Claude Code (any project)
-/standup
+~/dev/thecompany/init-docs.sh ~/dev/myproject
 ```
 
-On first run in a project, you'll be prompted to configure:
-- **Project name** - Display name for headers
-- **Stack prefix** - CloudFormation stack filter (e.g., "STC")
-- **Pipeline name** - CodePipeline name
-- **Frontend directories** - Paths to frontend apps
+This sets up the docs structure with symlinks back to thecompany.
 
-Configuration is saved to `.standup-config.json` in each project.
+### Health Check
+
+```bash
+~/dev/thecompany/setup-doctor.sh ~/dev/myproject ~/dev/another-project
+```
+
+Checks and fixes broken symlinks (useful if thecompany repo moves).
 
 ## AWS Credentials
 
@@ -82,51 +79,85 @@ AWS credentials are **not** available by default on the web (ephemeral VMs don't
 
 Credentials entered via the prompt are stored in `CLAUDE_ENV_FILE` and persist for the entire session, but are **not** saved between sessions (you'll be prompted again next time).
 
-## Configuration
+## Available Commands
 
-Each project's `.standup-config.json`:
+| Command | Description |
+|---------|-------------|
+| `/standup` | Project standup with AWS status, costs, pending work |
+| `/new-design-doc` | Create a design doc with auto-generated ID |
+| `/new-bug` | Create a bug report with auto-generated ID |
+| `/new-todo` | Create a TODO item with auto-generated ID |
+| `/new-research` | Create a research doc with date prefix |
 
-```json
-{
-  "project_name": "MyApp",
-  "stack_prefix": "MA",
-  "pipeline_name": "myapp-pipeline",
-  "todos_path": "docs/todos",
-  "design_docs_path": "docs/design",
-  "meeting_notes_path": "docs/meeting-notes",
-  "mobile": {
-    "android_apk_path": "android/app/build/outputs/apk/debug",
-    "ios_app_path": "ios/build/Build/Products/Debug-iphonesimulator"
-  },
-  "frontends": ["frontend", "admin"]
-}
-```
+## Project Docs Structure
 
-## Adding to Allowed Commands
-
-To run `/standup` without permission prompts, add to your Claude Code settings:
+After running `init-docs.sh`, a project gets:
 
 ```
-Bash(~/.claude/scripts/standup-data.sh:*)
+project/
+├── docs/
+│   ├── README.md          # Project-specific index (copied)
+│   ├── meta/              # Symlink → documentation guidelines
+│   ├── bugs/              # Bug reports
+│   ├── design/            # Design documents
+│   ├── meetings/          # Meeting notes
+│   ├── operations/        # Runbooks
+│   ├── research/          # Domain research
+│   ├── reviews/           # Code reviews, audits
+│   └── todos/             # TODO items
+├── .markdownlint.jsonc    # Symlink → linting config
+├── .vale.ini              # Symlink → prose linting
+├── .markdown-link-check.json # Symlink → link checking
+└── mkdocs.yml             # Project-specific (copied)
 ```
 
-## Structure
+## How Symlinks Work
+
+- **Symlinked content** (meta/, README.md in each folder, configs): Changes in thecompany propagate instantly to all projects
+- **Copied content** (docs/README.md, mkdocs.yml): Project-specific, won't update automatically
+
+## Repo Structure
 
 ```
 thecompany/
 ├── install.sh                      # Local installation script (desktop/CLI)
 ├── web-install.sh                  # Web installation script (called by SessionStart)
+├── init-docs.sh                    # Per-project docs setup
+├── setup-doctor.sh                 # Health check and fix
 ├── .claude/                        # Command and script storage
 │   ├── commands/
-│   │   └── standup.md              # Slash command
+│   │   ├── standup.md
+│   │   ├── new-design-doc.md
+│   │   ├── new-bug.md
+│   │   ├── new-todo.md
+│   │   └── new-research.md
 │   └── scripts/
-│       ├── standup-data.sh         # Data collection script
-│       └── prompt-aws-creds.sh     # AWS credential prompt
+│       ├── standup-data.sh
+│       ├── next-doc-id.sh
+│       └── prompt-aws-creds.sh
+├── docs-meta/                      # Meta guides (symlinked to project/docs/meta/)
+├── docs-templates/                 # README templates (symlinked per-folder)
+├── configs/                        # Linting configs (symlinked to project root)
 └── templates/
-    ├── standup-config.json         # Per-project config template
-    └── claude-settings-web.json    # SessionStart hook template for web
+    ├── standup-config.json
+    ├── docs-README.md
+    ├── mkdocs.yml
+    └── claude-settings-web.json
 ```
 
-## Related
+## Adding New Commands
 
-- `~/dev/theteam` - Persona management (separate concern)
+1. Create `.claude/commands/newcmd.md` with frontmatter and instructions
+2. Run `./install.sh` to create the symlink locally
+3. Command becomes available as `/newcmd` globally
+
+## Standup Configuration
+
+On first `/standup` run in a project, you'll be prompted to configure:
+
+- **Project name** - Display name for headers
+- **Stack prefix** - CloudFormation stack filter (optional)
+- **Pipeline name** - CodePipeline name (optional)
+- **Frontend directories** - Paths to frontend apps
+
+Configuration is saved to `.standup-config.json` in each project.
