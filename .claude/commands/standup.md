@@ -52,10 +52,23 @@ This outputs sections delimited by `=== SECTION_NAME ===` markers.
 
 Use decorative section headers with emoji and underlines. Format based on what data is available.
 
+**First, generate a pep talk paragraph** to display right after the header. Write it in the style of a hype man / intense motivational speaker addressing a team. It should:
+- Be 4-6 sentences, high energy, ALL CAPS on key phrases
+- Address the team collectively ("we", "us", "team", "champions")
+- Include phrases like "We can do this!", "The time is NOW", "we're gonna make shit happen"
+- Be purpose-driven (our work matters, we're solving real problems, making an impact)
+- End with a rallying cry to dive into the standup
+- Be different every time - vary the structure, phrases, and energy
+
+Example (DO NOT copy verbatim, create fresh variations):
+> What a TEAM. What a crew. You all woke up today and chose to BUILD. We can do this! The time is NOW and we're gonna make shit happen TOGETHER! Every line of code we write solves a real problem for real people. Our work MATTERS. Someone out there is going to have a better day because of what we ship. We're not here to participate—we're here to DOMINATE. To CREATE. To leave our mark. And guess what? We're getting stronger every single day. NOW LET'S GO! Let's see what we've crushed and what greatness is coming next!
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  ⚡ {PROJECT_NAME} STANDUP                                {YYYY-MM-DD}
+  🚀 {PROJECT_NAME} STANDUP                                {YYYY-MM-DD}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{PEP_TALK_PARAGRAPH}
 
 
 ☁️  AWS INFRASTRUCTURE (if stack_prefix configured)
