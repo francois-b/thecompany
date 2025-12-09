@@ -17,12 +17,15 @@ If missing, ask: "No mkdocs.yml found. Do you want me to initialize the docs str
 
 ## Step 2: Get Project Name
 
+Try to extract from mkdocs.yml, stripping common suffixes:
 ```bash
-grep -E "^site_name:" mkdocs.yml | sed 's/site_name: *//' | tr '[:upper:]' '[:lower:]' | tr ' ' '-'
+grep -E "^site_name:" mkdocs.yml | sed 's/site_name: *//' | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed -E 's/-?docs?$//' | sed 's/-$//'
 ```
 
-If empty or generic like "project-docs", use AskUserQuestion to ask:
+If empty or generic like "project", use AskUserQuestion to ask:
 "What's the project name for the docs URL? (e.g., 'flashcards' → docs-flashcards.spacetimecards.com)"
+
+The project name should be short and identify the project (e.g., "flashcards", "myapp"), NOT include "docs" in it.
 
 ## Step 3: Check if Infrastructure Exists
 
