@@ -5,10 +5,7 @@ import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as targets from 'aws-cdk-lib/aws-route53-targets';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
-import * as fs from 'fs';
-import * as path from 'path';
 import { Construct } from 'constructs';
 
 export interface DocsHostingStackProps extends cdk.StackProps {
@@ -49,20 +46,41 @@ export class DocsHostingStack extends cdk.Stack {
       ? ssm.StringParameter.valueForStringParameter(this, props.ssmUsernamePath)
       : 'docs';
 
-    // Read and inject credentials into Lambda code
-    const lambdaCode = fs.readFileSync(
-      path.join(__dirname, '../lambda/basic-auth.js'),
-      'utf-8'
-    )
-      .replace('{{USERNAME}}', username)
-      .replace('{{PASSWORD}}', password);
+    // Base64 encode credentials for basic auth comparison
+    const expectedAuth = cdk.Fn.base64(`${username}:${password}`);
 
-    // Lambda@Edge for basic auth (must be in us-east-1)
-    const authFunction = new cloudfront.experimental.EdgeFunction(this, 'AuthFunction', {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromInline(lambdaCode),
-      description: `Basic auth for ${fullDomain}`,
+    // CloudFront Function for basic auth (simpler than Lambda@Edge, no replica issues)
+    const authFunction = new cloudfront.Function(this, 'AuthFunction', {
+      code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+  var request = event.request;
+  var headers = request.headers;
+  var expectedAuth = "Basic ${expectedAuth}";
+
+  var authHeader = headers.authorization;
+  if (authHeader && authHeader.value === expectedAuth) {
+    // Rewrite URI to append index.html for directory paths
+    var uri = request.uri;
+    if (uri.endsWith('/')) {
+      request.uri += 'index.html';
+    } else if (uri.lastIndexOf('.') <= uri.lastIndexOf('/')) {
+      request.uri += '/index.html';
+    }
+    return request;
+  }
+
+  return {
+    statusCode: 401,
+    statusDescription: 'Unauthorized',
+    headers: {
+      'www-authenticate': { value: 'Basic realm="Documentation"' },
+      'content-type': { value: 'text/html' }
+    },
+    body: '<html><body><h1>401 Unauthorized</h1><p>Authentication required.</p></body></html>'
+  };
+}
+      `),
+      comment: `Basic auth for ${fullDomain}`,
     });
 
     // Import existing certificate
@@ -77,10 +95,10 @@ export class DocsHostingStack extends cdk.Stack {
       defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(bucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        edgeLambdas: [
+        functionAssociations: [
           {
-            functionVersion: authFunction.currentVersion,
-            eventType: cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
+            function: authFunction,
+            eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
           },
         ],
       },
