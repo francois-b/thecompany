@@ -84,6 +84,7 @@ Credentials entered via the prompt are stored in `CLAUDE_ENV_FILE` and persist f
 | `/new-bug` | Create a bug report with auto-generated ID |
 | `/new-todo` | Create a TODO item with auto-generated ID |
 | `/new-research` | Create a research doc with date prefix |
+| `/deploy-docs` | Build and deploy MkDocs to AWS |
 
 ## Project Docs Structure
 
@@ -130,7 +131,10 @@ thecompany/
 │   └── scripts/
 │       ├── standup-data.sh
 │       ├── next-doc-id.sh
+│       ├── deploy-docs.sh
 │       └── prompt-aws-creds.sh
+├── cdk/
+│   └── docs-hosting/               # CDK stack for AWS docs hosting
 ├── docs-meta/                      # Meta guides (symlinked to project/docs/meta/)
 ├── docs-templates/                 # README templates (symlinked per-folder)
 ├── configs/                        # Linting configs (symlinked to project root)
@@ -146,6 +150,53 @@ thecompany/
 1. Create `.claude/commands/newcmd.md` with frontmatter and instructions
 2. Run `./install.sh` to create the symlink locally
 3. Command becomes available as `/newcmd` globally
+
+## Docs Hosting (AWS)
+
+Host your MkDocs on AWS with password protection at `docs-{project}.spacetimecards.com`.
+
+### One-time Setup
+
+1. **Store password in SSM** (us-east-1):
+   ```bash
+   aws ssm put-parameter \
+     --name "/thecompany/docs-password" \
+     --value "your-password" \
+     --type SecureString \
+     --region us-east-1
+   ```
+
+2. **Deploy infrastructure** for your project:
+   ```bash
+   cd ~/dev/thecompany/cdk/docs-hosting
+   npm install
+   cdk deploy \
+     -c projectName=flashcards \
+     -c hostedZoneId=ZXXXXX \
+     -c certificateArn=arn:aws:acm:us-east-1:ACCOUNT:certificate/XXXXX
+   ```
+
+3. **Save the outputs** to your project's `.docs-hosting.json`:
+   ```json
+   {
+     "bucket": "docs-flashcards-spacetimecards-com",
+     "distributionId": "EXXXXXXXXXXXXX"
+   }
+   ```
+
+### Deploy Docs
+
+```bash
+# Using slash command (in Claude Code)
+/deploy-docs
+
+# Or directly
+~/.claude/scripts/deploy-docs.sh .
+```
+
+This builds with MkDocs and syncs to S3, then invalidates CloudFront cache.
+
+Access at: `https://docs-{project}.spacetimecards.com` (username: `docs`)
 
 ## Standup Configuration
 
