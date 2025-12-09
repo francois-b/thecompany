@@ -11,6 +11,7 @@ const domainName = app.node.tryGetContext('domainName') || 'spacetimecards.com';
 const hostedZoneId = app.node.tryGetContext('hostedZoneId');
 const certificateArn = app.node.tryGetContext('certificateArn');
 const ssmPasswordPath = app.node.tryGetContext('ssmPasswordPath') || '/thecompany/docs-password';
+const subdomain = app.node.tryGetContext('subdomain'); // Optional custom subdomain
 
 if (!projectName) {
   throw new Error('Missing required context: projectName (use -c projectName=myproject)');
@@ -30,6 +31,7 @@ new DocsHostingStack(app, `DocsHosting-${projectName}`, {
   hostedZoneId,
   certificateArn,
   ssmPasswordPath,
+  subdomain,
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: 'us-east-1', // Lambda@Edge requires us-east-1

@@ -15,6 +15,7 @@ export interface DocsHostingStackProps extends cdk.StackProps {
   certificateArn: string; // Wildcard cert ARN
   ssmPasswordPath: string; // e.g., /thecompany/docs-password
   ssmUsernamePath?: string; // Optional, defaults to 'docs'
+  subdomain?: string; // Optional custom subdomain, defaults to docs-{projectName}
 }
 
 export class DocsHostingStack extends cdk.Stack {
@@ -25,7 +26,7 @@ export class DocsHostingStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: DocsHostingStackProps) {
     super(scope, id, props);
 
-    const subdomain = `docs-${props.projectName}`;
+    const subdomain = props.subdomain || `docs-${props.projectName}`;
     const fullDomain = `${subdomain}.${props.domainName}`;
 
     // S3 bucket for docs
