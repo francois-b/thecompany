@@ -68,12 +68,13 @@ The `/standup` command displays AWS infrastructure data (CloudFormation stacks, 
 If you have AWS credentials configured locally (via `~/.aws/credentials` or environment variables), `/standup` will automatically use them.
 
 ### Web
-AWS credentials are **not** available by default on the web (ephemeral VMs don't have access to your local credentials). You have two options:
+AWS credentials are **not** available by default on the web (ephemeral VMs don't have access to your local credentials). You have three options:
 
 1. **Skip AWS features** (default) - `/standup` works but skips CloudFormation/CodePipeline/Costs sections
-2. **Prompt for credentials** - Add `prompt-aws-creds.sh` to your SessionStart hook (see installation above)
+2. **Pre-configure in environment settings** - Set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_DEFAULT_REGION` as environment variables in your Claude Code for web settings. The `prompt-aws-creds.sh` script will detect these automatically and skip prompting.
+3. **Prompt for credentials** - Add `prompt-aws-creds.sh` to your SessionStart hook (see installation above) and enter credentials interactively when prompted
 
-Credentials entered via the prompt are stored in `CLAUDE_ENV_FILE` and persist for the entire session, but are **not** saved between sessions (you'll be prompted again next time).
+Credentials entered via the prompt are stored in `CLAUDE_ENV_FILE` and persist for the entire session, but are **not** saved between sessions (you'll be prompted again next time). Environment variables set in Claude Code settings persist across sessions.
 
 ## Available Commands
 
