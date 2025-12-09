@@ -6,6 +6,12 @@ set -e
 
 CONFIG_FILE=".standup-config.json"
 
+# Check if AWS credentials are available
+AWS_AVAILABLE=false
+if aws sts get-caller-identity &>/dev/null; then
+  AWS_AVAILABLE=true
+fi
+
 # Read config values (with defaults)
 if [ -f "$CONFIG_FILE" ]; then
   PROJECT_NAME=$(jq -r '.project_name // ""' "$CONFIG_FILE")
@@ -33,23 +39,27 @@ echo "STACK_PREFIX=$STACK_PREFIX"
 echo "PIPELINE_NAME=$PIPELINE_NAME"
 
 echo "=== STACKS ==="
-if [ -n "$STACK_PREFIX" ]; then
+if [ "$AWS_AVAILABLE" = true ] && [ -n "$STACK_PREFIX" ]; then
   aws cloudformation describe-stacks --query "Stacks[?contains(StackName, \`$STACK_PREFIX\`)].{Name:StackName,Status:StackStatus,Updated:LastUpdatedTime}" --output json 2>/dev/null || echo "[]"
 else
   echo "[]"
 fi
 
 echo "=== PIPELINE ==="
-if [ -n "$PIPELINE_NAME" ]; then
+if [ "$AWS_AVAILABLE" = true ] && [ -n "$PIPELINE_NAME" ]; then
   aws codepipeline get-pipeline-state --name "$PIPELINE_NAME" --query 'stageStates[*].{Stage:stageName,Status:latestExecution.status}' --output json 2>/dev/null || echo "[]"
 else
   echo "[]"
 fi
 
 echo "=== COSTS ==="
-START=$(date -v1d +%Y-%m-01 2>/dev/null || date -d "$(date +%Y-%m-01)" +%Y-%m-01)
-END=$(date +%Y-%m-%d)
-aws ce get-cost-and-usage --time-period Start=$START,End=$END --granularity MONTHLY --metrics "UnblendedCost" --group-by Type=DIMENSION,Key=SERVICE --output json 2>/dev/null || echo "{}"
+if [ "$AWS_AVAILABLE" = true ]; then
+  START=$(date -v1d +%Y-%m-01 2>/dev/null || date -d "$(date +%Y-%m-01)" +%Y-%m-01)
+  END=$(date +%Y-%m-%d)
+  aws ce get-cost-and-usage --time-period Start=$START,End=$END --granularity MONTHLY --metrics "UnblendedCost" --group-by Type=DIMENSION,Key=SERVICE --output json 2>/dev/null || echo "{}"
+else
+  echo "{}"
+fi
 
 echo "=== GIT_LOG ==="
 git log --oneline -20 --format="%h %s" 2>/dev/null || echo "No git history"
