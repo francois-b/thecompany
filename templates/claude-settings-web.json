@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'if [ ! -d ~/.thecompany ]; then git clone https://github.com/francois-b/thecompany ~/.thecompany; fi && bash ~/.thecompany/web-install.sh'"
+            "command": "bash -c 'if [ ! -d ~/.thecompany ]; then git clone https://github.com/francois-b/thecompany ~/.thecompany; fi && bash ~/.thecompany/web-install.sh && bash ~/.claude/scripts/prompt-aws-creds.sh'"
           }
         ]
       }
