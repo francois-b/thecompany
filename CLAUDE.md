@@ -62,8 +62,8 @@ thecompany/
 
 | Script | Usage |
 |--------|-------|
-| `install.sh` | Sets up global symlinks in ~/.claude/ |
-| `init-docs.sh <path>` | Initializes docs structure in a project |
+| `install.sh [path]` | Sets up global symlinks, optionally init docs in a project |
+| `init-docs.sh <path>` | Initializes docs structure in a project (standalone) |
 | `setup-doctor.sh [paths...]` | Checks and fixes broken symlinks |
 
 ## Adding New Commands

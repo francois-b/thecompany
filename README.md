@@ -40,21 +40,17 @@ A template is available in `templates/claude-settings-web.json`.
 
 ### For Claude Code Desktop/CLI (Local)
 
-Run once to install globally across all your local projects:
+Run once to install globally and optionally set up docs in a project:
 
 ```bash
+# Global commands only
 ~/dev/thecompany/install.sh
+
+# Global commands + init docs in a project
+~/dev/thecompany/install.sh ~/dev/myproject
 ```
 
-This creates symlinks in `~/.claude/` for all commands and scripts.
-
-### Initialize Docs in a Project
-
-```bash
-~/dev/thecompany/init-docs.sh ~/dev/myproject
-```
-
-This sets up the docs structure with symlinks back to thecompany.
+This creates symlinks in `~/.claude/` for all commands and scripts, and optionally sets up the docs structure in your project.
 
 ### Health Check
 

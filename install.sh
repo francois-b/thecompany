@@ -1,10 +1,11 @@
 #!/bin/bash
-# Setup global Claude Code commands and scripts (run once)
-# Usage: ~/dev/thecompany/install.sh
+# Setup global Claude Code commands and scripts, optionally init docs in a project
+# Usage: ~/dev/thecompany/install.sh [project-path]
 
 set -e
 
 THECOMPANY_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$1"
 
 echo "Installing thecompany tooling globally..."
 
@@ -28,14 +29,20 @@ for script in "$THECOMPANY_DIR"/.claude/scripts/*.sh; do
 done
 
 echo ""
-echo "Done! Global commands installed:"
+echo "Global commands installed:"
 echo "  /standup        - Project standup with AWS status"
 echo "  /new-design-doc - Create a new design document"
 echo "  /new-bug        - Create a new bug report"
 echo "  /new-todo       - Create a new TODO item"
 echo "  /new-research   - Create a new research document"
-echo ""
-echo "Edit files in $THECOMPANY_DIR to update globally."
-echo ""
-echo "To set up docs structure in a project, run:"
-echo "  $THECOMPANY_DIR/init-docs.sh <project-path>"
+
+# If project path provided, init docs there
+if [ -n "$PROJECT_DIR" ]; then
+  echo ""
+  echo "========================================"
+  "$THECOMPANY_DIR/init-docs.sh" "$PROJECT_DIR"
+else
+  echo ""
+  echo "To set up docs structure in a project, run:"
+  echo "  $THECOMPANY_DIR/install.sh <project-path>"
+fi
