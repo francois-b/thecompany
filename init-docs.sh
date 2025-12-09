@@ -60,6 +60,20 @@ if [ ! -f "$TARGET_DIR/mkdocs.yml" ]; then
   echo "  ✓ Created mkdocs.yml (edit site_name for your project)"
 fi
 
+# Ensure .gitignore exists and includes 'site' for MkDocs build output
+GITIGNORE="$TARGET_DIR/.gitignore"
+if [ ! -f "$GITIGNORE" ]; then
+  echo "site/" > "$GITIGNORE"
+  echo "  ✓ Created .gitignore with 'site/'"
+elif ! grep -q "^site/?$" "$GITIGNORE" 2>/dev/null; then
+  echo "" >> "$GITIGNORE"
+  echo "# MkDocs build output" >> "$GITIGNORE"
+  echo "site/" >> "$GITIGNORE"
+  echo "  ✓ Added 'site/' to .gitignore"
+else
+  echo "  ✓ .gitignore already includes 'site/'"
+fi
+
 echo ""
 echo "Done! Docs structure initialized."
 echo ""
