@@ -9,7 +9,6 @@ Works with both Claude Code desktop/CLI and Claude Code on the web.
 - `.claude/commands/` - Slash commands (auto-loaded on web, symlinked locally)
 - `.claude/scripts/` - Supporting scripts
 - `templates/` - Config templates for reference
-- `commands/`, `scripts/` - Legacy directories (deprecated)
 
 ## Installation
 

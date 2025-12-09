@@ -10,37 +10,7 @@ Works with both Claude Code desktop/CLI and Claude Code on the web.
 
 To use these commands in **other projects** on the web (e.g., `project-a`, `project-b`):
 
-1. **Add a SessionStart hook** to your project's `.claude/settings.json`:
-
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'if [ ! -d ~/.thecompany ]; then git clone https://github.com/francois-b/thecompany ~/.thecompany; fi && bash ~/.thecompany/web-install.sh'"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-2. **What this does:**
-   - Clones `thecompany` and `theteam` repos to the web VM (once per session)
-   - Creates `~/.claude/` directory structure
-   - Symlinks all commands and scripts from both repos
-   - Now `/standup` and other commands work in your project!
-
-A template is available in `templates/claude-settings-web.json`.
-
-**Optional: Enable AWS credential prompting**
-
-By default, `/standup` will skip AWS features (CloudFormation, CodePipeline, Cost Explorer) if credentials aren't available. To prompt for credentials at session start, add this to your SessionStart hook:
+**Add a SessionStart hook** to your project's `.claude/settings.json`:
 
 ```json
 {
@@ -60,7 +30,13 @@ By default, `/standup` will skip AWS features (CloudFormation, CodePipeline, Cos
 }
 ```
 
-This will prompt for AWS credentials once per session (you can skip by pressing Enter).
+**What this does:**
+1. Clones `thecompany` repo to `~/.thecompany` (once per session)
+2. Runs `web-install.sh` which clones `theteam` and sets up `~/.claude/` symlinks
+3. Prompts for AWS credentials (press Enter to skip if not needed)
+4. All commands from both repos are now available: `/standup`, persona commands, etc.
+
+A template is available in `templates/claude-settings-web.json`.
 
 ### For Claude Code Desktop/CLI (Local)
 
@@ -145,12 +121,10 @@ thecompany/
 │   │   └── standup.md              # Slash command
 │   └── scripts/
 │       ├── standup-data.sh         # Data collection script
-│       └── prompt-aws-creds.sh     # Optional AWS credential prompt
-├── templates/
-│   ├── standup-config.json         # Per-project config template
-│   └── claude-settings-web.json    # SessionStart hook template for web
-├── commands/                       # Legacy (deprecated)
-└── scripts/                        # Legacy (deprecated)
+│       └── prompt-aws-creds.sh     # AWS credential prompt
+└── templates/
+    ├── standup-config.json         # Per-project config template
+    └── claude-settings-web.json    # SessionStart hook template for web
 ```
 
 ## Related
