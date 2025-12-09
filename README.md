@@ -102,6 +102,7 @@ project/
 │   ├── research/          # Domain research
 │   ├── reviews/           # Code reviews, audits
 │   └── todos/             # TODO items
+├── .gitignore             # Created/updated (includes site/)
 ├── .markdownlint.jsonc    # Symlink → linting config
 ├── .vale.ini              # Symlink → prose linting
 ├── .markdown-link-check.json # Symlink → link checking
@@ -154,6 +155,8 @@ thecompany/
 ## Docs Hosting (AWS)
 
 Host your MkDocs on AWS with password protection at `docs-{project}.spacetimecards.com`.
+
+Uses CloudFront Functions for basic auth (simpler and cheaper than Lambda@Edge).
 
 ### One-time Setup
 

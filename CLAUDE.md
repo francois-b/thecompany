@@ -31,7 +31,10 @@ thecompany/
 │   └── scripts/            # Supporting scripts
 │       ├── standup-data.sh
 │       ├── next-doc-id.sh
+│       ├── deploy-docs.sh
 │       └── prompt-aws-creds.sh
+├── cdk/
+│   └── docs-hosting/       # CDK stack for AWS docs hosting (CloudFront + S3)
 ├── docs-meta/              # Meta guides → project/docs/meta/
 ├── docs-templates/         # README templates → project/docs/*/README.md
 ├── configs/                # Linting configs → project root
@@ -51,6 +54,7 @@ thecompany/
 | `/new-bug` | Create a bug report with auto-generated ID |
 | `/new-todo` | Create a TODO item with auto-generated ID |
 | `/new-research` | Create a research doc with date prefix |
+| `/deploy-docs` | Build and deploy MkDocs to AWS |
 
 ## Installation
 
@@ -88,9 +92,11 @@ project/
 │   ├── research/README.md
 │   ├── reviews/README.md
 │   └── todos/README.md
+├── .gitignore             # Created/updated (includes site/)
 ├── .markdownlint.jsonc    # Symlink
 ├── .vale.ini              # Symlink
-└── .markdown-link-check.json # Symlink
+├── .markdown-link-check.json # Symlink
+└── mkdocs.yml             # Copied (project-specific)
 ```
 
 ## Conventions
